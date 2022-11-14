@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"whitefrog/cli"
+
+	"github.com/joewhite86/cli"
 )
 
 // nolint:gomnd

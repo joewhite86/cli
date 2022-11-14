@@ -7,7 +7,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-	"whitefrog/cli"
+
+	"github.com/joewhite86/cli"
 )
 
 var ctx = context.Background()

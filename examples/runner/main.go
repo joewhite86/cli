@@ -6,7 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
-	"whitefrog/cli"
+
+	"github.com/joewhite86/cli"
 )
 
 var Ls = cli.Command{

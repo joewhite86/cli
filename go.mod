@@ -1,3 +1,3 @@
-module whitefrog/cli
+module github.com/joewhite86/cli
 
-go 1.17
+go 1.19

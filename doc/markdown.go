@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"io"
 	"strings"
-	"whitefrog/cli"
+
+	"github.com/joewhite86/cli"
 )
 
 func GenMarkdown(cmd *cli.Command, dir string) error {
