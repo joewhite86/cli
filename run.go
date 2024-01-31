@@ -65,9 +65,11 @@ func resolve(cmd *Command, args []string, params Params) (*Command, error) {
 			return resolve(&clone, args[1:], params)
 		}
 	}
-	// if len(args) > 0 {
-	// 	return nil, fmt.Errorf("invalid arguments: %s", args)
-	// }
+	if len(args) > 0 {
+		fmt.Fprintf(os.Stderr, "invalid arguments: %s\n\n", args)
+		cmd.printHelp()
+		os.Exit(1)
+	}
 
 	return cmd, nil
 }

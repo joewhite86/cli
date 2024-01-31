@@ -20,6 +20,7 @@ func Int32Parser(val string) (interface{}, error) {
 	if err != nil {
 		return int32(-1), err
 	}
+
 	return int32(i64), nil
 }
 
@@ -38,20 +39,29 @@ func parseArgs(cmd *Command, args *[]string) Params {
 			skip--
 			continue
 		}
+
 		var found bool
 		if !isFlag(arg) {
 			skip, found = parseArguments(cmd, params, i, args)
 			if !found {
 				notFound = append(notFound, arg)
 			}
+
 			continue
 		}
+
 		skip, found = parseFlags(cmd, params, i, args)
 		if !found {
 			notFound = append(notFound, arg)
 		}
 	}
 	*args = notFound
+
+	for _, arg := range cmd.Args {
+		if _, exists := params[arg.Name]; !exists && arg.Default != nil {
+			params[arg.Name] = arg.Default
+		}
+	}
 
 	return params
 }
@@ -61,15 +71,19 @@ func parseFlags(cmd *Command, params Params, index int, args *[]string) (skip in
 		if params[param.Name] != nil || !param.matches((*args)[index]) {
 			continue
 		}
+
 		next := ""
 		if param.HasValue && len(*args) > index+1 {
 			next = (*args)[index+1]
 		}
+
 		params[param.Name] = param.parse(next)
 		found = true
+
 		if param.HasValue {
 			skip++
 		}
+
 		break
 	}
 	return
@@ -80,14 +94,18 @@ func parseArguments(cmd *Command, params Params, index int, args *[]string) (ski
 		if params[param.Name] != nil {
 			continue
 		}
+
 		if param.Vararg {
 			skip, found = parseVargs(param, params, index, args)
 			break
 		}
+
 		params[param.Name] = param.parse((*args)[index])
 		found = true
+
 		break
 	}
+
 	return
 }
 
@@ -95,14 +113,18 @@ func parseVargs(param Arg, params Params, index int, args *[]string) (skip int, 
 	params[param.Name] = []string{}
 	for len(*args) > index+skip {
 		cur := (*args)[index+skip]
+
 		if isFlag(cur) {
 			skip--
+
 			break
 		}
+
 		params[param.Name] = append(params[param.Name].([]string), param.parse(cur).(string))
 		found = true
 		skip++
 	}
+
 	return
 }
 
@@ -111,6 +133,7 @@ func checkRequiredParams(cmd *Command, params map[string]interface{}) error {
 		if !arg.Required {
 			continue
 		}
+
 		if _, ok := params[arg.Name]; !ok {
 			return fmt.Errorf("required argument <%s> not set", arg.Name)
 		}
@@ -120,6 +143,7 @@ func checkRequiredParams(cmd *Command, params map[string]interface{}) error {
 		if !flag.Required {
 			continue
 		}
+
 		if _, ok := params[flag.Name]; !ok {
 			return fmt.Errorf("required flag [%s] not set", flag.Name)
 		}
